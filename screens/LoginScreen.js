@@ -4,6 +4,22 @@ import * as Google from "expo-google-app-auth";
 import firebase from "firebase";
 
 export default class LoginScreen extends Component {
+    isUserEqual = (googleUser, firebaseUser) => {
+        if (firebaseUser) {
+            var providerData = firebaseUser.providerData;
+            for (var i = 0; i < providerData.length; i++) {
+                if (
+                    providerData[i].providerId ===
+                    firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
+                    providerData[i].uid === googleUser.getBasicProfile().getId()
+                ) {
+                    // We don't need to reauth the Firebase connection.
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
 
     onSignIn = googleUser => {
         // We need to register an Observer on Firebase Auth to make sure auth is initialized.
